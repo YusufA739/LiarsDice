@@ -1,4 +1,4 @@
-import random,time,os,sys
+import random,time,os
 
 
 def setup():
@@ -6,6 +6,7 @@ def setup():
     allPlayerHands = []
     cpuMode = False
 
+    os.system('cls')
     try:
         players = int(input("How many players?"))
         if players < 1:
@@ -25,13 +26,18 @@ def setup():
         for dieCount in dieInHands:
             allPlayerHands.append([0])
             blankArray = []
-            for dice in range(dieCount):
+            for placeholder in range(dieCount):
                 blankArray.append(0)
             allPlayerHands[tempIndex] = blankArray
             tempIndex = tempIndex + 1
 
         currentAction = 0
         nextAction = currentAction + 1
+
+        if cpuMode:
+            print("CPU Mode enabled. Player 0 is you, Player 1 is the CPU.")
+            
+
         game(allPlayerHands,dieInHands,players,currentAction,nextAction)#give initial conditions to gameloop
         playAgain = input("Play again? (y/n)")
         if playAgain == "y" or playAgain == "yes":
@@ -91,7 +97,113 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                     print("Invalid input. Integers only for face and count.")
 
             os.system('cls')
+            print("Player " + str(nextAction) + "'s turn")
+            print("Your dice:",allPlayerHands[nextAction])
+
+            print("\nPlayer " + str(currentAction) + "'s bet:\n")
+            print(dicegraphics(diceFace,minCount))
+
+            bluffCall = input("Do you want to call bluff, Player "+str(nextAction)+"?(y/n)")
+            if bluffCall.lower() == "y":
+
+                actualcount = 0
+                validBet = False
+                for hand in allPlayerHands:
+                    for dice in hand:
+                        if dice == diceFace:
+                            actualcount = actualcount + 1
+                if actualcount >= minCount:
+                    validBet = True
+
+                if validBet:
+                    print("Valid bet from Player",currentAction,"so Player",nextAction,"loses a dice for an incorrect bluff call")
+                    dieInHands[nextAction] = dieInHands[nextAction] - 1
+                    print(allPlayerHands)
+                    print(dieInHands)
+                else:
+                    print("Invalid bet from Player",currentAction,"so Player",nextAction,"wins a dice for a correct bluff call")
+                    dieInHands[currentAction] = dieInHands[currentAction] - 1
+                    print(allPlayerHands)
+                    print(dieInHands)
+                lastBet = 11
+            else:
+                print("Last Bet"+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
+                lastBet = currentBet
+                lastFace = diceFace
+                lastCount = minCount
+                if (lastFace == 6 and lastCount == totalDiceCount):
+                    print("Maximum bet reached, resetting bet...")
+
+            currentAction = nextAction
+            nextAction = currentAction + 1
+
+
+
+def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
+    validGame = True
+    lastBet = 10
+    lastFace = 0
+    lastCount = 0
+    while validGame:
+        for i in range(len(dieInHands)):#check all players have more than 0 dice in hand
+            if (dieInHands[i]) > 0:
+                pass
+            elif (dieInHands[i]) == 0:#precheck to remove players and prevent next action (bluff call) being
+                allPlayerHands,dieInHands = removePlayer(allPlayerHands,dieInHands,i)
+                players -= 1
+        if players <= 1:
+            validGame = False
+            print("Game Over")
+        else:
+            if currentAction >= players:#loop it back around
+                currentAction = players - 1
+            if nextAction >= players:#loop it back around
+                nextAction = 0
+
+            allPlayerHands = generateHands(dieInHands,players)
+
+            os.system('cls')  # Clear the console for a fresh view
             print("Player " + str(currentAction) + "'s turn")
+            print("Your dice:",allPlayerHands[currentAction])
+            dieCountFormatted = "\n"
+            for carrier in range(players):
+                dieCountFormatted = dieCountFormatted + "Player " + str(carrier) + ":" + str(dieInHands[carrier]) + "\n"
+            print("\nPlayer Dice Count:"+dieCountFormatted)
+
+            while True:
+                if currentAction == 0:
+                    try:
+                        diceFace = int(input("Which face?"))
+                        minCount = int(input("How much?"))
+                        currentBet = int(str(diceFace) + str(minCount))
+                        
+                        totalDiceCount = sum(dieInHands)
+                        if currentBet > lastBet and minCount <= totalDiceCount and minCount >= 1 and diceFace <= 6 and diceFace >= 1:
+                            lastBet = currentBet #not needed, but is valid anyway
+                            break
+                        else:
+                            if not currentBet > lastBet:
+                                print("Bet is less than last bet.\nYour bet:",currentBet,"    Last bet:",lastBet)
+                            time.sleep(2)
+                    except ValueError:
+                        print("Invalid input. Integers only for face and count.")
+                else:
+                    diceFace = random.randint(1, 6)
+                    minCount = 0
+                    for i in range(len(allPlayerHands[currentAction])):
+                        if allPlayerHands[currentAction][i] == diceFace:
+                            minCount += 1
+                    
+                    if minCount == 0:
+                        minCount = 1#bluff it anyway, don't bother playing it safe and rerolling the diceFace we want
+                    else:
+                        if dieInHands[1] > dieInHands[0]:#if cpu has more dice than player, we add some extra dice to be more risky (if that prob plays out), otherwise play it safe
+                            minCount = random.randint(minCount, minCount + random.randint(0, totalDiceCount - totalDiceCount // 2))
+                        else:
+                            minCount -= 1 #avoid spot on so subtract 1
+
+            os.system('cls')
+            print("Player " + str(nextAction) + "'s turn")
             print("Your dice:",allPlayerHands[nextAction])
 
             print("\nPlayer " + str(currentAction) + "'s bet:\n")
@@ -131,7 +243,6 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
 
             currentAction = nextAction
             nextAction = currentAction + 1
-
 
 
 def generateHands(dieinhands,playercount):
@@ -214,6 +325,31 @@ def dicegraphics(number,frequency):
               You must perform error handling beforehand, 
               by checking if user submitted a number within 1-6 dice range.""")
     return graphics
+
+def guessDice(count, side, ownDice, players, diceRemaining, playerNum):
+    dice = []
+
+    diceRemaining[playerNum] = 0
+
+    for carrier in range(players):
+        diceGen = []
+        for carrier2 in range(diceRemaining[carrier]):
+            diceGen.append(random.randint(1, 6))
+        if len(diceGen) > 0:    
+            dice.append(diceGen)
+
+    dice.append(ownDice)
+
+    for hand in dice:
+        for d in hand:
+            if d == side:
+                count -= 1
+
+    if count <= 0:
+        return True
+    else:
+        return False
+
 
 setupReturn = 0
 while setupReturn == 0:

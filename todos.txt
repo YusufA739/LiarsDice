@@ -1,0 +1,1 @@
+Make CPU player (without looking)
