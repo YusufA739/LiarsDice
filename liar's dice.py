@@ -53,7 +53,8 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
     lastBet = 10
     lastFace = 0
     lastCount = 0
-    while validGame:
+    actionTaken = False #records any action taken against any other player 
+    while validGame: #main game while loop
         for i in range(len(dieInHands)):#check all players have more than 0 dice in hand
             if (dieInHands[i]) > 0:
                 pass
@@ -69,7 +70,10 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
             if nextAction >= players:#loop it back around
                 nextAction = 0
 
-            allPlayerHands = generateHands(dieInHands,players)
+            if not actionTaken:
+                allPlayerHands = generateHands(dieInHands,players)
+            else:
+                actionTaken = False #reset flag for next round
 
             os.system('cls')  # Clear the console for a fresh view
             print("Player " + str(currentAction) + "'s turn")
@@ -103,8 +107,10 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
             print("\nPlayer " + str(currentAction) + "'s bet:\n")
             print(dicegraphics(diceFace,minCount))
 
-            bluffCall = input("Do you want to call bluff, Player "+str(nextAction)+"?(y/n)")
-            if bluffCall.lower() == "y":
+            bluffCall = input("Do you want to call:\n(b)bluff\n(s)spot on\n(c)continue, Player "+str(nextAction)+"?(b/s/<enter>):")
+            if bluffCall.lower() == "y" or bluffCall.lower() == "b":
+                
+                actionTaken = True
 
                 actualcount = 0
                 validBet = False
@@ -126,25 +132,54 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                     print(allPlayerHands)
                     print(dieInHands)
                 lastBet = 11
+            elif bluffCall.lower() == "s":
+                
+                actionTaken = True
+
+                actualcount = 0
+                validBet = False
+                for hand in allPlayerHands:
+                    for dice in hand:
+                        if dice == diceFace:
+                            actualcount = actualcount + 1
+                if actualcount == minCount:
+                    validBet = False
+
+                if validBet:
+                    print("Bet from Player",currentAction,"was not exact, so Player",nextAction,"loses a dice for an incorrect spot on call")
+                    dieInHands[nextAction] = dieInHands[nextAction] - 1
+                    print(allPlayerHands)
+                    print(dieInHands)
+                else:
+                    print("Bet from Player",currentAction,"was exact, so Player",nextAction,"wins a dice for a correct spot on call")
+                    dieInHands[currentAction] = dieInHands[currentAction] - 1
+                    print(allPlayerHands)
+                    print(dieInHands)
+
+
             else:
+                print("No action taken, Player "+str(nextAction)+" continues")
+                time.sleep(1)
                 print("Last Bet"+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
+                time.sleep(1)
                 lastBet = currentBet
                 lastFace = diceFace
                 lastCount = minCount
                 if (lastFace == 6 and lastCount == totalDiceCount):
                     print("Maximum bet reached, resetting bet...")
+                    time.sleep(1)
 
             currentAction = nextAction
             nextAction = currentAction + 1
 
 
-
-def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
+def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction):
     validGame = True
     lastBet = 10
     lastFace = 0
     lastCount = 0
-    while validGame:
+    actionTaken = False #records any action taken against any other player 
+    while validGame: #main game while loop
         for i in range(len(dieInHands)):#check all players have more than 0 dice in hand
             if (dieInHands[i]) > 0:
                 pass
@@ -160,7 +195,10 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
             if nextAction >= players:#loop it back around
                 nextAction = 0
 
-            allPlayerHands = generateHands(dieInHands,players)
+            if not actionTaken:
+                allPlayerHands = generateHands(dieInHands,players)
+            else:
+                actionTaken = False #reset flag for next round
 
             os.system('cls')  # Clear the console for a fresh view
             print("Player " + str(currentAction) + "'s turn")
@@ -171,7 +209,7 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
             print("\nPlayer Dice Count:"+dieCountFormatted)
 
             while True:
-                if currentAction == 0:
+                if currentAction == 0:  # Player's turn
                     try:
                         diceFace = int(input("Which face?"))
                         minCount = int(input("How much?"))
@@ -187,7 +225,7 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                             time.sleep(2)
                     except ValueError:
                         print("Invalid input. Integers only for face and count.")
-                else:
+                else:#cpu's turn
                     diceFace = random.randint(1, 6)
                     minCount = 0
                     for i in range(len(allPlayerHands[currentAction])):
@@ -200,46 +238,80 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                         if dieInHands[1] > dieInHands[0]:#if cpu has more dice than player, we add some extra dice to be more risky (if that prob plays out), otherwise play it safe
                             minCount = random.randint(minCount, minCount + random.randint(0, totalDiceCount - totalDiceCount // 2))
                         else:
-                            minCount -= 1 #avoid spot on so subtract 1
+                            #           -1  +  2 * (0 or 1) = 1 or -1
+                            minCount += -1 + (2*round(random.random())) #avoid spot on so subtract or add 1
 
             os.system('cls')
-            print("Player " + str(nextAction) + "'s turn")
-            print("Your dice:",allPlayerHands[nextAction])
+            if currentAction == 0:  # Player's turn
+                print("Player " + str(nextAction) + "'s turn")
+                print("Your dice:",allPlayerHands[nextAction])
 
-            print("\nPlayer " + str(currentAction) + "'s bet:\n")
-            print(dicegraphics(diceFace,minCount))
+                print("\nPlayer " + str(currentAction) + "'s bet:\n")
+                print(dicegraphics(diceFace,minCount))
 
-            bluffCall = input("Do you want to call bluff, Player "+str(nextAction)+"?(y/n)")
-            if bluffCall.lower() == "y":
+                bluffCall = input("Do you want to call:\n(b)bluff\n(s)spot on\n(c)continue, Player "+str(nextAction)+"?(b/s/<enter>):")
+                if bluffCall.lower() == "y" or bluffCall.lower() == "b":
+                    
+                    actionTaken = True
 
-                actualcount = 0
-                validBet = False
-                for hand in allPlayerHands:
-                    for dice in hand:
-                        if dice == diceFace:
-                            actualcount = actualcount + 1
-                if actualcount >= minCount:
-                    validBet = True
+                    actualcount = 0
+                    validBet = False
+                    for hand in allPlayerHands:
+                        for dice in hand:
+                            if dice == diceFace:
+                                actualcount = actualcount + 1
+                    if actualcount >= minCount:
+                        validBet = True
 
-                if validBet:
-                    print("Valid bet from Player",currentAction,"so Player",nextAction,"loses a dice for an incorrect bluff call")
-                    dieInHands[nextAction] = dieInHands[nextAction] - 1
-                    print(allPlayerHands)
-                    print(dieInHands)
+                    if validBet:
+                        print("Valid bet from Player",currentAction,"so Player",nextAction,"loses a dice for an incorrect bluff call")
+                        dieInHands[nextAction] = dieInHands[nextAction] - 1
+                        print(allPlayerHands)
+                        print(dieInHands)
+                    else:
+                        print("Invalid bet from Player",currentAction,"so Player",nextAction,"wins a dice for a correct bluff call")
+                        dieInHands[currentAction] = dieInHands[currentAction] - 1
+                        print(allPlayerHands)
+                        print(dieInHands)
+                    lastBet = 11
+                elif bluffCall.lower() == "s":
+                    
+                    actionTaken = True
+
+                    actualcount = 0
+                    validBet = False
+                    for hand in allPlayerHands:
+                        for dice in hand:
+                            if dice == diceFace:
+                                actualcount = actualcount + 1
+                    if actualcount == minCount:
+                        validBet = False
+
+                    if validBet:
+                        print("Bet from Player",currentAction,"was not exact, so Player",nextAction,"loses a dice for an incorrect spot on call")
+                        dieInHands[nextAction] = dieInHands[nextAction] - 1
+                        print(allPlayerHands)
+                        print(dieInHands)
+                    else:
+                        print("Bet from Player",currentAction,"was exact, so Player",nextAction,"wins a dice for a correct spot on call")
+                        dieInHands[currentAction] = dieInHands[currentAction] - 1
+                        print(allPlayerHands)
+                        print(dieInHands)
+
+
                 else:
-                    print("Invalid bet from Player",currentAction,"so Player",nextAction,"wins a dice for a correct bluff call")
-                    dieInHands[currentAction] = dieInHands[currentAction] - 1
-                    print(allPlayerHands)
-                    print(dieInHands)
-                lastBet = 11
-            else:
-                print("Last Bet"+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
-                lastBet = currentBet
-                lastFace = diceFace
-                lastCount = minCount
-                if (lastFace == 6 and lastCount == totalDiceCount):
-                    print("Maximum bet reached, resetting bet...")
-            
+                    print("No action taken, Player "+str(nextAction)+" continues")
+                    time.sleep(1)
+                    print("Last Bet"+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
+                    time.sleep(1)
+                    lastBet = currentBet
+                    lastFace = diceFace
+                    lastCount = minCount
+                    if (lastFace == 6 and lastCount == totalDiceCount):
+                        print("Maximum bet reached, resetting bet...")
+                        time.sleep(1)
+            else:#CPU's turn
+                pass
 
             currentAction = nextAction
             nextAction = currentAction + 1
@@ -309,15 +381,15 @@ def dicegraphics(number,frequency):
         graphics += (" ---------") + "\n"
     elif number == 5:
         graphics += (" ---------") + "\n"
-        graphics += ("|  *   *  |") + "\n"
+        graphics += ("| *     * |") + "\n"
         graphics += ("|    *    |   x     " + str(frequency)) + "\n"
-        graphics += ("|  *   *  |") + "\n"
+        graphics += ("| *     * |") + "\n"
         graphics += (" ---------") + "\n"
     elif number == 6:
         graphics += (" ---------") + "\n"
-        graphics += ("|  *   *  |") + "\n"
-        graphics += ("|  *   *  |   x     " + str(frequency)) + "\n"
-        graphics += ("|  *   *  |") + "\n"
+        graphics += ("| *     * |") + "\n"
+        graphics += ("| *     * |   x     " + str(frequency)) + "\n"
+        graphics += ("| *     * |") + "\n"
         graphics += (" ---------") + "\n"
     else:
         graphics("""Invalid number for dice graphics.
@@ -349,6 +421,9 @@ def guessDice(count, side, ownDice, players, diceRemaining, playerNum):
         return True
     else:
         return False
+
+def CPU():
+    pass
 
 
 setupReturn = 0
