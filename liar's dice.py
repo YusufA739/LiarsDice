@@ -58,24 +58,12 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
     names = takenames(players,cpuMode=False)  # Get player names (avoid use of magic number type of condition (pirate software XD))
     while validGame: #main game while loop
 
-        #kick 0 dice players (should be only 1 per round max, 0 per round min, so this loop can be changed to reduce time from O(n) to O(n) (second one is n/2 average btw XD)
-        #the better way to optimise to O(1) is to remove player in the betting check for ejecting. This would speed up process and keep everything running the same, the only difference ->
-        #is that ejection happens at the end of the cycle and picking occurs in a different cycle. These two actions are not one operation, they are atomic from each other, so it should be fine
-        #to do it this way, but let me add the removing code first
-        for i in range(len(dieInHands)):#check all players have more than 0 dice in hand
-            if (dieInHands[i]) > 0:
-                pass
-            elif (dieInHands[i]) == 0:#precheck to remove players and prevent next action (bluff call) being
-                allPlayerHands,dieInHands,names = removePlayer(allPlayerHands,dieInHands,names,i)
-                players -= 1
+        #crown winner
         if players <= 1:
             validGame = False
             print("Game Over")
         else:
-            if currentAction >= players:#loop it back around
-                currentAction = players - 1
-            if nextAction >= players:#loop it back around
-                nextAction = 0
+            currentAction,nextAction = selectPlayers(players,currentAction,nextAction,lastEject)#select new numbers for actions
 
             if actionTaken:#get new dice as last were revealed (irl version, may implement this later)
                 allPlayerHands = generateHands(dieInHands)
@@ -134,6 +122,9 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                     dieInHands[nextAction] = dieInHands[nextAction] - 1
                     if dieInHands[nextAction] == 0:
                         lastEject = "next"
+                        allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,nextAction)
+                        players -= 1
+
                     print(allPlayerHands)
                     print(dieInHands)
                 else:
@@ -141,6 +132,9 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                     dieInHands[currentAction] = dieInHands[currentAction] - 1
                     if dieInHands[currentAction] == 0:
                         lastEject = "current"
+                        allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,currentAction)
+                        players -= 1
+
                     print(allPlayerHands)
                     print(dieInHands)
                 lastBet = 10
@@ -162,6 +156,9 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                     dieInHands[nextAction] = dieInHands[nextAction] - 1
                     if dieInHands[nextAction] == 0:
                         lastEject = "next"
+                        allPlayerHands,dieInHands,names = removePlayer(allPlayerHands,dieInHands,names,nextAction)
+                        players -= 1
+
                     print(allPlayerHands)
                     print(dieInHands)
                 else:
@@ -169,6 +166,9 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                     dieInHands[currentAction] = dieInHands[currentAction] - 1
                     if dieInHands[currentAction] == 0:
                         lastEject = "current"
+                        allPlayerHands,dieInHands,names = removePlayer(allPlayerHands,dieInHands,names,currentAction)
+                        players -= 1
+
                     print(allPlayerHands)
                     print(dieInHands)
 
@@ -199,20 +199,12 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
     names = takenames(players,cpuMode)
     while validGame: #main game while loop
 
-        #remove players with no dice
-        for i in range(len(dieInHands)):#I could rewrite this check in the betting section to reduce complexity. But I don't think I will :)
-            if (dieInHands[i]) > 0:
-                pass
-            elif (dieInHands[i]) == 0:#precheck to remove players and prevent next action (bluff call) being
-                allPlayerHands,dieInHands,names = removePlayer(allPlayerHands,dieInHands,names,i)
-                players -= 1
-
         #if only 1 player remains... CROWN HIM WINNER!!!
         if players <= 1:
             validGame = False
             print("Game Over")
             print("Player " + names[0] + " wins!")
-        else:
+        else:#else, we should start by generating the action numbers
             currentAction,nextAction = selectPlayers(players,currentAction,nextAction,lastEject)#select new numbers for actions
 
             #regenerate hands if actions were taken (dice usually get shown in irl/gui modes)
@@ -290,6 +282,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
                         if dieInHands[nextAction] == 0:
                             lastEject = "next"
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,nextAction)
+                            players -= 1
+
                         print(allPlayerHands)
                         print(dieInHands)
                     else:
@@ -297,6 +292,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
                         if dieInHands[currentAction] == 0:
                             lastEject = "current"
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,currentAction)
+                            players -= 1
+
                         print(allPlayerHands)
                         print(dieInHands)
                     lastBet = 10
@@ -318,6 +316,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
                         if dieInHands[nextAction] == 0:
                             lastEject = "next"
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,nextAction)
+                            players -= 1
+
                         print(allPlayerHands)
                         print(dieInHands)
                     else:
@@ -325,6 +326,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
                         if dieInHands[currentAction] == 0:
                             lastEject = "current"
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,currentAction)
+                            players -= 1
+
                         print(allPlayerHands)
                         print(dieInHands)
 
@@ -370,6 +374,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
                         if dieInHands[nextAction] == 0:
                             lastEject = "next"
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,nextAction)
+                            players -= 1
+
                         print(allPlayerHands)
                         print(dieInHands)
                     else:
@@ -377,6 +384,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
                         if dieInHands[currentAction] == 0:
                             lastEject = "current"
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,currentAction)
+                            players -= 1
+
                         print(allPlayerHands)
                         print(dieInHands)
                     lastBet = 10
@@ -398,6 +408,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
                         if dieInHands[nextAction] == 0:
                             lastEject = "next"
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,nextAction)
+                            players -= 1
+
                         print(allPlayerHands)
                         print(dieInHands)
                     else:
@@ -405,6 +418,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
                         if dieInHands[currentAction] == 0:
                             lastEject = "current"
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,currentAction)
+                            players -= 1
+
                         print(allPlayerHands)
                         print(dieInHands)
 
