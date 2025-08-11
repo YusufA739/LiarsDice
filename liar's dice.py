@@ -52,9 +52,16 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
     lastBet = 10
     lastFace = 0
     lastCount = 0
-    actionTaken = False #records any action taken against any other player
+    lastEject = "none"
+    #when we start the game set this to true, so we can get new hands, it will reset to false anyway as actionTaken tells the code to gen new hands
+    actionTaken = True #records any action taken against any other player, resets when new hands are generated, which will be due to flag being true
     names = takenames(players,cpuMode=False)  # Get player names (avoid use of magic number type of condition (pirate software XD))
     while validGame: #main game while loop
+
+        #kick 0 dice players (should be only 1 per round max, 0 per round min, so this loop can be changed to reduce time from O(n) to O(n) (second one is n/2 average btw XD)
+        #the better way to optimise to O(1) is to remove player in the betting check for ejecting. This would speed up process and keep everything running the same, the only difference ->
+        #is that ejection happens at the end of the cycle and picking occurs in a different cycle. These two actions are not one operation, they are atomic from each other, so it should be fine
+        #to do it this way, but let me add the removing code first
         for i in range(len(dieInHands)):#check all players have more than 0 dice in hand
             if (dieInHands[i]) > 0:
                 pass
@@ -70,8 +77,9 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
             if nextAction >= players:#loop it back around
                 nextAction = 0
 
-            if not actionTaken:
+            if actionTaken:#get new dice as last were revealed (irl version, may implement this later)
                 allPlayerHands = generateHands(dieInHands)
+                actionTaken = False
             else:
                 actionTaken = False #reset flag for next round
 
@@ -124,14 +132,18 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                 if validBet:
                     print("Valid bet from Player",names[currentAction],"so Player",names[nextAction],"loses a dice for an incorrect bluff call")
                     dieInHands[nextAction] = dieInHands[nextAction] - 1
+                    if dieInHands[nextAction] == 0:
+                        lastEject = "next"
                     print(allPlayerHands)
                     print(dieInHands)
                 else:
                     print("Invalid bet from Player",names[currentAction],"so Player",names[nextAction],"wins a dice for a correct bluff call")
                     dieInHands[currentAction] = dieInHands[currentAction] - 1
+                    if dieInHands[currentAction] == 0:
+                        lastEject = "current"
                     print(allPlayerHands)
                     print(dieInHands)
-                lastBet = 11
+                lastBet = 10
             elif bluffCall.lower() == "s":
                 
                 actionTaken = True
@@ -143,16 +155,20 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                         if dice == diceFace:
                             actualcount = actualcount + 1
                 if actualcount == minCount:
-                    validBet = False
+                    validBet = True
 
                 if validBet:
                     print("Bet from Player",names[currentAction],"was not exact, so Player",names[nextAction],"loses a dice for an incorrect spot on call")
                     dieInHands[nextAction] = dieInHands[nextAction] - 1
+                    if dieInHands[nextAction] == 0:
+                        lastEject = "next"
                     print(allPlayerHands)
                     print(dieInHands)
                 else:
                     print("Bet from Player",names[currentAction],"was exact, so Player",names[nextAction],"wins a dice for a correct spot on call")
                     dieInHands[currentAction] = dieInHands[currentAction] - 1
+                    if dieInHands[currentAction] == 0:
+                        lastEject = "current"
                     print(allPlayerHands)
                     print(dieInHands)
 
@@ -178,29 +194,33 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
     lastBet = 10
     lastFace = 0
     lastCount = 0
-    actionTaken = False #records any action taken against any other player#
+    actionTaken = False #records any action taken against any other player
+    lastEject = "none"
     names = takenames(players,cpuMode)
     while validGame: #main game while loop
-        for i in range(len(dieInHands)):#check all players have more than 0 dice in hand
+
+        #remove players with no dice
+        for i in range(len(dieInHands)):#I could rewrite this check in the betting section to reduce complexity. But I don't think I will :)
             if (dieInHands[i]) > 0:
                 pass
             elif (dieInHands[i]) == 0:#precheck to remove players and prevent next action (bluff call) being
                 allPlayerHands,dieInHands,names = removePlayer(allPlayerHands,dieInHands,names,i)
                 players -= 1
+
+        #if only 1 player remains... CROWN HIM WINNER!!!
         if players <= 1:
             validGame = False
             print("Game Over")
             print("Player " + names[0] + " wins!")
         else:
-            if currentAction >= players:#loop it back around
-                currentAction = players - 1
-            if nextAction >= players:#loop it back around
-                nextAction = 0
+            currentAction,nextAction = selectPlayers(players,currentAction,nextAction,lastEject)#select new numbers for actions
 
-            if not actionTaken:
+            #regenerate hands if actions were taken (dice usually get shown in irl/gui modes)
+            if actionTaken:
                 allPlayerHands = generateHands(dieInHands)
+                actionTaken = False
             else:
-                actionTaken = False #reset flag for next round
+                pass#don't generate new hands
 
             os.system('cls')  # Clear the console for a fresh view
             print("Player " + names[currentAction] + "'s turn")
@@ -209,6 +229,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
             for carrier in range(players):
                 dieCountFormatted = dieCountFormatted + "Player " + names[carrier] + ":" + str(dieInHands[carrier]) + "\n"
             print("\nPlayer Dice Count:"+dieCountFormatted)
+            totalDiceCount = sum(dieInHands)
 
             while True:
                 if currentAction == 0:  # Player's turn
@@ -216,8 +237,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         diceFace = int(input("Which face?"))
                         minCount = int(input("How much?"))
                         currentBet = int(str(diceFace) + str(minCount))
-                        
-                        totalDiceCount = sum(dieInHands)
+
                         if currentBet > lastBet and minCount <= totalDiceCount and minCount >= 1 and diceFace <= 6 and diceFace >= 1:
                             lastBet = currentBet #not needed, but is valid anyway
                             break
@@ -238,7 +258,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         minCount = 1#bluff it anyway, don't bother playing it safe and rerolling the diceFace we want
                     else:
                         if dieInHands[1] > dieInHands[0]:#if cpu has more dice than player, we add some extra dice to be more risky (if that prob plays out), otherwise play it safe
-                            minCount = random.randint(minCount, minCount + random.randint(0, totalDiceCount - totalDiceCount // 2))
+                            minCount = random.randint(minCount, minCount + random.randint(0, totalDiceCount - (totalDiceCount // 2)))
                         else:
                             #           -1  +  2 * (0 or 1) = 1 or -1
                             minCount += -1 + (2*round(random.random())) #avoid spot on so subtract or add 1
@@ -268,14 +288,18 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                     if validBet:
                         print("Valid bet from Player",names[currentAction],"so Player",names[nextAction],"loses a dice for an incorrect bluff call")
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
+                        if dieInHands[nextAction] == 0:
+                            lastEject = "next"
                         print(allPlayerHands)
                         print(dieInHands)
                     else:
                         print("Invalid bet from Player",names[currentAction],"so Player",names[nextAction],"wins a dice for a correct bluff call")
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
+                        if dieInHands[currentAction] == 0:
+                            lastEject = "current"
                         print(allPlayerHands)
                         print(dieInHands)
-                    lastBet = 11
+                    lastBet = 10
                 elif bluffCall.lower() == "s":
                     
                     actionTaken = True
@@ -287,16 +311,20 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                             if dice == diceFace:
                                 actualcount = actualcount + 1
                     if actualcount == minCount:
-                        validBet = False
+                        validBet = True
 
                     if validBet:
                         print("Bet from Player",names[currentAction],"was not exact, so Player",names[nextAction],"loses a dice for an incorrect spot on call")
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
+                        if dieInHands[nextAction] == 0:
+                            lastEject = "next"
                         print(allPlayerHands)
                         print(dieInHands)
                     else:
                         print("Bet from Player",names[currentAction],"was exact, so Player",names[nextAction],"wins a dice for a correct spot on call")
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
+                        if dieInHands[currentAction] == 0:
+                            lastEject = "current"
                         print(allPlayerHands)
                         print(dieInHands)
 
@@ -340,14 +368,18 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                     if validBet:
                         print("Valid bet from Player",names[currentAction],"so Player",names[nextAction],"loses a dice for an incorrect bluff call")
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
+                        if dieInHands[nextAction] == 0:
+                            lastEject = "next"
                         print(allPlayerHands)
                         print(dieInHands)
                     else:
                         print("Invalid bet from Player",names[currentAction],"so Player",names[nextAction],"wins a dice for a correct bluff call")
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
+                        if dieInHands[currentAction] == 0:
+                            lastEject = "current"
                         print(allPlayerHands)
                         print(dieInHands)
-                    lastBet = 11
+                    lastBet = 10
                 elif bluffCall.lower() == "s":
                     
                     actionTaken = True
@@ -359,16 +391,20 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                             if dice == diceFace:
                                 actualcount = actualcount + 1
                     if actualcount == minCount:
-                        validBet = False
+                        validBet = True
 
                     if validBet:
                         print("Bet from Player",names[currentAction],"was not exact, so Player",names[nextAction],"loses a dice for an incorrect spot on call")
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
+                        if dieInHands[nextAction] == 0:
+                            lastEject = "next"
                         print(allPlayerHands)
                         print(dieInHands)
                     else:
                         print("Bet from Player",names[currentAction],"was exact, so Player",names[nextAction],"wins a dice for a correct spot on call")
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
+                        if dieInHands[currentAction] == 0:
+                            lastEject = "current"
                         print(allPlayerHands)
                         print(dieInHands)
 
@@ -463,7 +499,7 @@ def dicegraphics(number,frequency):
         graphics += ("| *     * |") + "\n"
         graphics += (" ---------") + "\n"
     else:
-        graphics("""Invalid number for dice graphics.
+        graphics = ("""Invalid number for dice graphics.
               Dice graphics will not perform error handling.
               You must perform error handling beforehand, 
               by checking if user submitted a number within 1-6 dice range.""")
@@ -514,7 +550,43 @@ def takenames(no_of_players,cpuMode):
         localnames.append(player1name)
         
     return localnames
-    
+
+def selectPlayers(players,current,next,lasteject):
+    maxIndex = players
+    if lasteject == "current":
+        if current <= maxIndex-1:#has to be second to last or less, so next does not get assigned out of bounds
+            pass
+        elif current == maxIndex:
+            next = 0
+        elif current > maxIndex:
+            current = 0
+            next = current + 1
+        else:
+            print("selectPlayers('current',...) failed cond check")
+    elif lasteject == "next":
+        if next >= maxIndex:
+            current = maxIndex
+            next = 0
+        elif next <= maxIndex-1:
+            current += 1
+            next = current + 1
+        else:
+            print("selectPlayers('next',...) failed cond check")
+    elif lasteject == "none":
+        if current >= maxIndex:#should never execute
+            current = 0
+            next = current + 1
+        elif current == maxIndex-1:
+            current = maxIndex
+            next = 0
+        elif current < maxIndex-1:
+            current = current + 1
+            next = current + 1
+        else:
+            print("selectPlayers('none',...) failed cond check")
+
+    return current,next
+
 
 
 setupReturn = 0
