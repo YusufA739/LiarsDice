@@ -149,7 +149,7 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                         if dice == diceFace:
                             actualcount = actualcount + 1
                 if actualcount == minCount:
-                    validBet = True
+                    validBet = False
 
                 if validBet:
                     print("Bet from Player",names[currentAction],"was not exact, so Player",names[nextAction],"loses a dice for an incorrect spot on call")
@@ -218,7 +218,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                 pass#don't generate new hands
 
             os.system('cls')  # Clear the console for a fresh view
-            print(currentAction)
+            #print(currentAction)debug due to old actioning code left in and causing bad behaviour (fixed)
             print("Player " + names[currentAction] + "'s turn")
             print("Your dice:",allPlayerHands[currentAction])
             dieCountFormatted = "\n"
@@ -318,7 +318,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                             if dice == diceFace:
                                 actualcount = actualcount + 1
                     if actualcount == minCount:
-                        validBet = True
+                        validBet = False
 
                     if validBet:
                         print("Bet from Player",names[currentAction],"was not exact, so Player",names[nextAction],"loses a dice for an incorrect spot on call")
@@ -410,7 +410,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                             if dice == diceFace:
                                 actualcount = actualcount + 1
                     if actualcount == minCount:
-                        validBet = True
+                        validBet = False
 
                     if validBet:
                         print("Bet from Player",names[currentAction],"was not exact, so Player",names[nextAction],"loses a dice for an incorrect spot on call")
