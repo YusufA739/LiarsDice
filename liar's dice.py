@@ -176,7 +176,7 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
             else:
                 print("No action taken, Player "+names[nextAction]+" continues")
                 time.sleep(1)
-                print("Last Bet"+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
+                print("Last Bet was "+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
                 time.sleep(1)
                 lastBet = currentBet
                 lastFace = diceFace
@@ -194,8 +194,10 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
     lastBet = 10
     lastFace = 0
     lastCount = 0
-    actionTaken = False #records any action taken against any other player
+    actionTaken = True #records any action taken against any other player
     lastEject = "none"
+    currentAction = random.randint(0,1)
+    nextAction = 1 - currentAction
     names = takenames(players,cpuMode)
     while validGame: #main game while loop
 
@@ -205,7 +207,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
             print("Game Over")
             print("Player " + names[0] + " wins!")
         else:#else, we should start by generating the action numbers
-            currentAction,nextAction = selectPlayers(players,currentAction,nextAction,lastEject)#select new numbers for actions
+            temp = currentAction
+            currentAction = nextAction
+            nextAction = temp
 
             #regenerate hands if actions were taken (dice usually get shown in irl/gui modes)
             if actionTaken:
@@ -215,6 +219,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                 pass#don't generate new hands
 
             os.system('cls')  # Clear the console for a fresh view
+            print(currentAction)
             print("Player " + names[currentAction] + "'s turn")
             print("Your dice:",allPlayerHands[currentAction])
             dieCountFormatted = "\n"
@@ -250,13 +255,18 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         minCount = 1#bluff it anyway, don't bother playing it safe and rerolling the diceFace we want
                     else:
                         if dieInHands[1] > dieInHands[0]:#if cpu has more dice than player, we add some extra dice to be more risky (if that prob plays out), otherwise play it safe
-                            minCount = random.randint(minCount, minCount + random.randint(0, totalDiceCount - (totalDiceCount // 2)))
-                        else:
+                            minCount = random.randint(minCount, minCount + random.randint(0,(round(totalDiceCount/2))))
+                        elif minCount > 1:
                             #           -1  +  2 * (0 or 1) = 1 or -1
                             minCount += -1 + (2*round(random.random())) #avoid spot on so subtract or add 1
+                        else:
+                            pass
+
+                    currentBet = int(str(diceFace) + str(minCount))
+                    break
 
             os.system('cls')
-            if currentAction == 0:  # Player's turn
+            if nextAction == 0:  # Player's turn
                 print("Player " + names[nextAction] + "'s turn")
                 print("Your dice:",allPlayerHands[nextAction])
 
@@ -336,7 +346,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                 else:
                     print("No action taken, Player "+names[nextAction]+" continues")
                     time.sleep(1)
-                    print("Last Bet"+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
+                    print("Last Bet was "+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
                     time.sleep(1)
                     lastBet = currentBet
                     lastFace = diceFace
@@ -427,7 +437,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
 
                 else:
                     print("No action taken, Player "+names[nextAction]+" continues")
-                    print("Last Bet"+names[currentBet]+". You must bet higher than this next round, by frequency or face or both")
+                    print("Last Bet was "+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
                     lastBet = currentBet
                     lastFace = diceFace
                     lastCount = minCount
@@ -559,11 +569,12 @@ def takenames(no_of_players,cpuMode):
                     localnames.append(name)
                     break
     else:
-        localnames.append("T-1")
         player1name = ""
-        while player1name.strip() == "" or player1name in localnames:
+        cpuName = "T-800"
+        while player1name.strip() == "" or player1name in localnames or player1name.lower() == cpuName:
             player1name = input("Enter name: ")
         localnames.append(player1name)
+        localnames.append(cpuName)
         
     return localnames
 
