@@ -1,4 +1,4 @@
-import random,time,os
+import random,time,os,math
 
 
 def setup():
@@ -261,7 +261,15 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         else:
                             pass
 
+                    #bet limiter
                     currentBet = int(str(diceFace) + str(minCount))
+                    newBet = 0
+                    if currentBet <= lastBet:
+                        if currentBet >= 40:
+                            newBet = lastBet + random.randint(1,2)
+                        else:
+                            newBet = lastBet + 10 + random.randint(0,1)
+
                     break
 
             os.system('cls')
@@ -308,7 +316,8 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         print(dieInHands)
                     lastBet = 10
                 elif bluffCall.lower() == "s":
-                    
+                    print("Player",names[nextAction],"calls spot on, on Player",names[currentAction])
+                    time.sleep(1)
                     actionTaken = True
 
                     actualcount = 0
@@ -343,10 +352,9 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
 
 
                 else:
-                    print("No action taken, Player "+names[nextAction]+" continues")
+                    print("No action taken, Player ",names[nextAction]," continues")
                     time.sleep(1)
                     print("Last Bet was "+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
-                    time.sleep(1)
                     lastBet = currentBet
                     lastFace = diceFace
                     lastCount = minCount
@@ -366,7 +374,8 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                     
                     
                 if bluffCall.lower() == "y" or bluffCall.lower() == "b":
-                    print("CPU Player " + names[currentAction] + " calls bluff on Player " + names[nextAction])
+                    print("Player",names[nextAction]," calls bluff on Player ",names[currentAction])
+                    time.sleep(1)
                     actionTaken = True
 
                     actualcount = 0
@@ -400,7 +409,8 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                         print(dieInHands)
                     lastBet = 10
                 elif bluffCall.lower() == "s":
-                    
+                    print("Player",names[nextAction],"calls spot on, on Player",names[currentAction])
+                    time.sleep(1)
                     actionTaken = True
 
                     actualcount = 0
@@ -435,7 +445,8 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
 
 
                 else:
-                    print("No action taken, Player "+names[nextAction]+" continues")
+                    print("No action taken, Player ",names[nextAction]," continues")
+                    time.sleep(1)
                     print("Last Bet was "+str(currentBet)+". You must bet higher than this next round, by frequency or face or both")
                     lastBet = currentBet
                     lastFace = diceFace
