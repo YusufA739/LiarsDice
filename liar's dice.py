@@ -185,8 +185,7 @@ def game(allPlayerHands,dieInHands,players,currentAction,nextAction):
                     print("Maximum bet reached, resetting bet...")
                     time.sleep(1)
 
-            currentAction = nextAction
-            nextAction = currentAction + 1
+        time.sleep(4)
 
 
 def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
@@ -360,7 +359,7 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                 cpuCount = minCount - allPlayerHands[nextAction].count(diceFace)
                 if cpuCount <= 1:#player got min number correct or player has once dice of that face as well as cpu having all of that face (can code in a 50/50 bluff when cpuCount == 1)
                     bluffCall = "n"
-                elif cpuCount/len(allPlayerHands[currentAction]) >= 0.6 and cpuCount > 1: #if player has >=60% of the dice, call bluff
+                elif cpuCount/len(allPlayerHands[currentAction]) >= 0.5 and cpuCount > 1: #if player has >=60% of the dice, call bluff
                     bluffCall = "b"
                 else:
                     bluffCall = "n"
@@ -444,8 +443,6 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                     if (lastFace == 6 and lastCount == totalDiceCount):
                         print("Maximum bet reached, resetting bet...")
             time.sleep(4)
-            currentAction = nextAction
-            nextAction = currentAction + 1
 
 
 def generateHands(dieinhands):#playercount not needed as len(dieInHands) represents info good enough
