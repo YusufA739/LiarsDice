@@ -244,14 +244,17 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
                     except ValueError:
                         print("Invalid input. Integers only for face and count.")
                 else:#cpu's turn
-                    diceFace = random.randint(1, 6)
+                    if lastFace == 0:
+                        diceFace = random.randint(1,6)
+                    else:
+                        diceFace = random.randint(lastFace, 6)
                     minCount = 0
                     for i in range(len(allPlayerHands[currentAction])):
                         if allPlayerHands[currentAction][i] == diceFace:
                             minCount += 1
                     
                     if minCount == 0:
-                        minCount = 1#bluff it anyway, don't bother playing it safe and rerolling the diceFace we want
+                        minCount = 1#bluff it anyway, don't bother playing it safe and rerolling the diceFace we want (bruh this makes it so weird, but kinda unpredictable. I'm going to leave it for now)
                     else:
                         if dieInHands[1] > dieInHands[0]:#if cpu has more dice than player, we add some extra dice to be more risky (if that prob plays out), otherwise play it safe
                             minCount = random.randint(minCount, minCount + random.randint(0,(round(totalDiceCount/2))))
@@ -263,13 +266,13 @@ def cpugame(allPlayerHands,dieInHands,players,currentAction,nextAction,cpuMode):
 
                     #bet limiter
                     currentBet = int(str(diceFace) + str(minCount))
-                    newBet = 0
                     if currentBet <= lastBet:
                         if currentBet >= 40:
-                            newBet = lastBet + random.randint(1,2)
+                            currentBet = lastBet + random.randint(lastCount, totalDiceCount)
                         else:
-                            newBet = lastBet + 10 + random.randint(0,1)
-
+                            currentBet = lastFace + 10 + random.randint(1,totalDiceCount)
+                    else:#bet is valid
+                        pass
                     break
 
             os.system('cls')
