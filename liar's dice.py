@@ -586,41 +586,41 @@ def takenames(no_of_players,cpuMode):
         
     return localnames
 
-def selectPlayers(players,current,next,lasteject):
-    maxIndex = players
+def selectPlayers(players,current,nextaction,lasteject):
+    maxIndex = players-1
     if lasteject == "current":
-        if current <= maxIndex-1:#has to be second to last or less, so next does not get assigned out of bounds
+        if current < maxIndex:#has to be second to last or less, so next does not get assigned out of bounds
             pass
         elif current == maxIndex:
-            next = 0
+            nextaction = 0
         elif current > maxIndex:
             current = 0
-            next = current + 1
+            nextaction = current + 1
         else:
-            print("selectPlayers('current',...) failed cond check")
+            pass
     elif lasteject == "next":
-        if next >= maxIndex:
+        if nextaction >= maxIndex:
             current = maxIndex
-            next = 0
-        elif next <= maxIndex-1:
+            nextaction = 0
+        elif nextaction < maxIndex:
             current += 1
-            next = current + 1
+            nextaction = current + 1
         else:
             print("selectPlayers('next',...) failed cond check")
     elif lasteject == "none":
-        if current >= maxIndex:#should never execute
+        if current >= maxIndex:#should never execute, realistically
             current = 0
-            next = current + 1
+            nextaction = current + 1
         elif current == maxIndex-1:
             current = maxIndex
-            next = 0
+            nextaction = 0
         elif current < maxIndex-1:
             current = current + 1
-            next = current + 1
+            nextaction = current + 1
         else:
             print("selectPlayers('none',...) failed cond check")
 
-    return current,next
+    return current,nextaction
 
 
 
