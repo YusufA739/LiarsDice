@@ -24,4 +24,4 @@ jobs:
           # pip install -r requirements.txt
 
       - name: test1
-        run: cpuTester
+        run: cpuTester.py
