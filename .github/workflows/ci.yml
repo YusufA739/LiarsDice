@@ -23,5 +23,5 @@ jobs:
           # if you have dependencies, add:
           # pip install -r requirements.txt
 
-      - name: Run tests
+      - name: test1
         run: cpuTester
