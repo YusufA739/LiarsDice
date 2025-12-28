@@ -14,10 +14,17 @@ def testBetting(allPlayerHands,lastFace,lastCount):
     assert (diceFace >= 0)
     assert (minCount > 0)
     assert (currentBet > lastBet)
+    return currentBet
 
+face = 3
+count = 3
+lastBet = int(str(face) + str(count))
+print("Last Bet:", lastBet)
 for carrier in range(100):
     print("Hand:",carrier+1)
     currentHands = generateHandsForTests()
+    print("Current Hands:",currentHands)
     for carrier2 in range(100):#repeat n times and see how stable the cpuBetting is
         print("Iteration:",carrier2+1)
-        testBetting(currentHands,lastFace=3,lastCount=3)
+        cBet = testBetting(currentHands,face,count)
+        print("Current Bet:",cBet)
