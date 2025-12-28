@@ -764,7 +764,7 @@ def normaliseChanceValues(easyChance, medChance, hardChance):  # in case new cha
 
     return easyChance, medChance, hardChance
 
-
+#main
 if __name__ == "__main__":
     setupReturn = 1
     while setupReturn == 1:
