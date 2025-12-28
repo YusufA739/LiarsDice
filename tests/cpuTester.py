@@ -1,5 +1,5 @@
 import random
-from liarsDice import cpuBet
+from ..liarsDice import cpuBet
 def testBetting():
     allPlayerHands = [[],[]]
     for carrier in range(2):
