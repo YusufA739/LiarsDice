@@ -264,7 +264,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                     minCount = 0
                     currentBet = 0
 
-                    diceFace, minCount = cpuBet(allPlayerHands, currentAction, lastCount, lastFace, easyChance, medChance, hardChance, diceFace, minCount)
+                    diceFace, minCount = cpuBet(allPlayerHands, currentAction, lastFace, lastCount, easyChance, medChance, hardChance, diceFace, minCount)
 
                     # bet builder and final checks
                     currentBet = int(str(diceFace) + str(minCount))
@@ -644,7 +644,7 @@ def selectPlayers(players, current, nextaction, lasteject):
     return current, nextaction
 
 
-def cpuBet(allPlayerHands, currentAction, lastCount, lastFace, easyChance, medChance, hardChance, diceFace, minCount):
+def cpuBet(allPlayerHands, currentAction, lastFace, lastCount, easyChance, medChance, hardChance, diceFace, minCount):
     # used in processing only
     facesPresent = []
     countOfFaces = [0, 0, 0, 0, 0, 0]
