@@ -264,8 +264,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                     minCount = 0
                     currentBet = 0
 
-                    diceFace, minCount = cpuBet(allPlayerHands, currentAction, lastCount, lastFace, easyChance,
-                                                medChance, hardChance, diceFace, minCount)
+                    diceFace, minCount = cpuBet(allPlayerHands, currentAction, lastCount, lastFace, easyChance, medChance, hardChance, diceFace, minCount)
 
                     # bet builder and final checks
                     currentBet = int(str(diceFace) + str(minCount))
@@ -304,8 +303,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
                         if dieInHands[nextAction] == 0:
                             lastEject = "next"
-                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,
-                                                                             nextAction)
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names, nextAction)
                             players -= 1
 
                         print(allPlayerHands)
@@ -316,8 +314,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
                         if dieInHands[currentAction] == 0:
                             lastEject = "current"
-                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,
-                                                                             currentAction)
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names, currentAction)
                             players -= 1
 
                         print(allPlayerHands)
@@ -343,8 +340,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                         dieInHands[nextAction] = dieInHands[nextAction] - 1
                         if dieInHands[nextAction] == 0:
                             lastEject = "next"
-                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,
-                                                                             nextAction)
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names, nextAction)
                             players -= 1
 
                         print(allPlayerHands)
@@ -355,8 +351,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                         dieInHands[currentAction] = dieInHands[currentAction] - 1
                         if dieInHands[currentAction] == 0:
                             lastEject = "current"
-                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names,
-                                                                             currentAction)
+                            allPlayerHands, dieInHands, names = removePlayer(allPlayerHands, dieInHands, names, currentAction)
                             players -= 1
 
                         print(allPlayerHands)
@@ -380,8 +375,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                 cpuCount = minCount - allPlayerHands[nextAction].count(diceFace)
                 if cpuCount <= 1:  # player got min number correct or player has once dice of that face as well as cpu having all of that face (can code in a 50/50 bluff when cpuCount == 1)
                     bluffCall = "n"
-                elif cpuCount / len(allPlayerHands[
-                                        currentAction]) >= 0.5 and cpuCount > 1:  # if player has >=60% of the dice, call bluff
+                elif cpuCount / len(allPlayerHands[currentAction]) >= 0.5 and cpuCount > 1:  # if player has >=60% of the dice, call bluff
                     bluffCall = "b"
                 else:
                     bluffCall = "n"
