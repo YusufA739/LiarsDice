@@ -17,4 +17,4 @@ jobs:
         python-version: '3.10'
 
     - name: Run script to verify
-      run: python tests/cpuTester.py
+      run: python cpuTester.py
