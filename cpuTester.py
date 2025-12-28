@@ -7,5 +7,5 @@ def testBetting():
             allPlayerHands[carrier].append(random.randint(1,6))
     diceFace, minCount = cpuBet(allPlayerHands, 1, 0, 3, 0, 0, 1, 3, 3)
     assert (diceFace >= 0)
-    assert (minCount < 0)
+    assert (minCount > 0)
 testBetting()
