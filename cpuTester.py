@@ -20,11 +20,11 @@ face = 3
 count = 3
 lastBet = int(str(face) + str(count))
 print("Last Bet:", lastBet)
-for carrier in range(100):
+for carrier in range(10):
     print("Hand:",carrier+1)
     currentHands = generateHandsForTests()
     print("Current Hands:",currentHands)
-    for carrier2 in range(100):#repeat n times and see how stable the cpuBetting is
+    for carrier2 in range(10):#repeat n times and see how stable the cpuBetting is
         print("Iteration:",carrier2+1)
         cBet = testBetting(currentHands,face,count)
         print("Current Bet:",cBet)
