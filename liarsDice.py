@@ -271,15 +271,15 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                     minCount = 0
                     currentBet = 0
 
-                    diceFace, minCount = cpuBet(allPlayerHands, currentAction, lastFace, lastCount, easyChance, medChance, hardChance, diceFace, minCount)
+                    currentBet, diceFace, minCount = cpuBet(allPlayerHands, currentAction, lastBet, lastFace, lastCount, currentBet, diceFace, minCount, easyChance, medChance, hardChance)
 
-                    # bet builder and final checks
-                    currentBet = int(str(diceFace) + str(minCount))
+                    #game checking if bet is valid - it is NOT part of the CPU's betting system (FINAL CHECK, similar to player betting)
                     if currentBet <= lastBet:
-                        currentBet = lastBet + random.randint(1, 3)
-                    else:  # bet is valid
-                        pass
-                    break
+                        print("Robot has done an invalid bet. Please wait...")
+                        print("REPORT THIS IF YOU NOTICE WITH SCREENSHOT")
+                        time.sleep(2)
+                    else:
+                        break
 
             os.system('cls')
             if nextAction == 0:  # Player's turn
@@ -557,10 +557,7 @@ def dicegraphics(number, frequency):
         graphics += ("| *     * |") + "\n"
         graphics += (" ---------") + "\n"
     else:
-        graphics = ("""Invalid number for dice graphics.
-              Dice graphics will not perform error handling.
-              You must perform error handling beforehand, 
-              by checking if user submitted a number within 1-6 dice range.""")
+        graphics = ("""unknownNumber""")
     return graphics
 
 
@@ -650,7 +647,7 @@ def selectPlayers(players, current, nextaction, lasteject):
     return current, nextaction
 
 
-def cpuBet(allPlayerHands, currentAction, lastFace, lastCount, easyChance, medChance, hardChance, diceFace, minCount):
+def cpuBet(allPlayerHands, currentAction, lastBet, lastFace, lastCount, currentBet, diceFace, minCount, easyChance, medChance, hardChance):
     #added hardening/checks against some errors (which technically should never occur, as the values are normalised before the game loop runs. They are never modified within game loop)
     if (easyChance + medChance + hardChance) != 1:
         easyChance, medChance, hardChance = normaliseChanceValues(easyChance, medChance, hardChance)
@@ -678,10 +675,10 @@ def cpuBet(allPlayerHands, currentAction, lastFace, lastCount, easyChance, medCh
                     minCount = lastCount + 1  # easiest way to meet threshold (this is easymode betting after all)
                 break  # to make it easy, just break now
 
-        if diceFace == 0:
+        if diceFace < lastFace:#if no suitable face was found
             diceFace = facesPresent[random.randint(0, len(facesPresent) - 1)]
             minCount = countOfFaces[diceFace]
-            if lastCount >= minCount:
+            if minCount <= lastCount:
                 minCount = lastCount + 1  # just bluff away, don't bother rerolling
 
     elif easyMedHard <= easyChance + medChance:  # strat 2: checks if it can raise current face bet, otherwise try go to face with the highest face that beats count and if that fails, pick random face
@@ -693,8 +690,8 @@ def cpuBet(allPlayerHands, currentAction, lastFace, lastCount, easyChance, medCh
                 if carrier > lastFace or (carrier == lastFace and countOfFaces[carrier - 1] > lastCount):
                     diceFace = carrier
                     minCount = countOfFaces[carrier - 1]
-            if diceFace == 0:
-                if lastCount > len(allPlayerHands[currentAction]):
+            if diceFace <= lastFace:
+                if lastCount + 1 > len(allPlayerHands[currentAction]):
                     diceFace = lastFace + 1
                     minCount = 1
                 else:
@@ -725,7 +722,14 @@ def cpuBet(allPlayerHands, currentAction, lastFace, lastCount, easyChance, medCh
     #     else:
     #         pass
 
-    return diceFace, minCount
+    # bet builder and final checks
+    currentBet = int(str(diceFace) + str(minCount))
+    if currentBet <= lastBet:
+        currentBet = lastBet + random.randint(1, 2)
+    else:# bet is valid
+        pass
+
+    return currentBet, diceFace, minCount
 
 
 def difficultySelect():
