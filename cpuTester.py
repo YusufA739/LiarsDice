@@ -1,5 +1,14 @@
 import random
-from liarsDice import cpuBet
+from liarsDice import cpuBet,dicegraphics
+
+threeTestUnit = ""
+
+threeTestUnit += (" ---------") + "\n"
+threeTestUnit += ("| *       |") + "\n"
+threeTestUnit += ("|    *    |   x     " + str(9)) + "\n"
+threeTestUnit += ("|       * |") + "\n"
+threeTestUnit += (" ---------") + "\n"
+
 def generateHandsForTests():
     allPlayerHands = [[], []]
     for carrier in range(2):
@@ -9,12 +18,17 @@ def generateHandsForTests():
 
 def testBetting(allPlayerHands,lastFace,lastCount):
     lastBet = int(str(lastFace) + str(lastCount))
-    diceFace, minCount = cpuBet(allPlayerHands, 1, lastFace, lastCount, 0, 0, 1, 3, 3)
-    currentBet = int(str(diceFace) + str(minCount))
+    currentBet, diceFace, minCount = cpuBet(allPlayerHands, 1, lastBet, lastFace, lastCount, 0, 5, 5, 1, 0, 0)
     assert (diceFace >= 0)
     assert (minCount > 0)
     assert (currentBet > lastBet)
     return currentBet
+
+def testGraphics():
+    assert dicegraphics(0,9) == "unknownNumber"
+    assert dicegraphics(7,9) == "unknownNumber"
+    assert dicegraphics(3,9) == threeTestUnit
+    print("PASSED - GRAPHICS TESTING")
 
 face = 3
 count = 3
@@ -28,3 +42,5 @@ for carrier in range(10):
         print("Iteration:",carrier2+1)
         cBet = testBetting(currentHands,face,count)
         print("Current Bet:",cBet)
+
+testGraphics()
