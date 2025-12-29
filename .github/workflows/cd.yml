@@ -1,20 +1,19 @@
-name: Python CD
+name: CD - Run on Release
 
 on:
   release:
     types: [created]
 
 jobs:
-  deploy:
+  run-on-release:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Run script to verify
-      run: python cpuTester.py
+    - name: Run script
+      run: |
+        echo "🎊 This is CD! Running because a release was created."
+        python liarsDice.py
+        echo "Release version: ${{ github.event.release.tag_name }}"
