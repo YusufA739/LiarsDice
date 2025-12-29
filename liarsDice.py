@@ -95,6 +95,10 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
                     else:
                         if not currentBet > lastBet:
                             print("Bet is less than last bet.\nYour bet:", currentBet, "    Last bet:", lastBet)
+                        if diceFace > 6 or diceFace < 1:
+                            print("Face chosen is not 1 to 6")
+                        if minCount <= lastCount:
+                            print("Minimum count is smaller than last count")
                         time.sleep(2)
                 except ValueError:
                     print("Invalid input. Integers only for face and count.")
@@ -106,8 +110,7 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
             print("\nPlayer " + names[currentAction] + "'s bet:\n")
             print(dicegraphics(diceFace, minCount))
 
-            bluffCall = input("Do you want to call:\n(b)bluff\n(s)spot on\n(c)continue, Player " + names[
-                nextAction] + "?(b/s/<enter>):")
+            bluffCall = input("(b)bluff\n(s)spot on\n(c)continue\nWhat do you want to call, Player " + names[nextAction] + "?(b/s/c):")
             if bluffCall.lower() == "y" or bluffCall.lower() == "b":
 
                 actionTaken = True
@@ -255,6 +258,10 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                         else:
                             if not currentBet > lastBet:
                                 print("Bet is less than last bet.\nYour bet:", currentBet, "    Last bet:", lastBet)
+                            if diceFace > 6 or diceFace < 1:
+                                print("Face chosen is not 1 to 6")
+                            if minCount <= lastCount:
+                                print("Minimum count is smaller than last count")
                             time.sleep(2)
                     except ValueError:
                         print("Invalid input. Integers only for face and count.")
@@ -282,8 +289,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                 print("\nPlayer " + names[currentAction] + "'s bet:\n")
                 print(dicegraphics(diceFace, minCount))
 
-                bluffCall = input("Do you want to call:\n(b)bluff\n(s)spot on\n(c)continue, Player " + names[
-                    nextAction] + "?(b/s/<enter>):")
+                bluffCall = input("(b)bluff\n(s)spot on\n(c)continue\n What do you want to do, Player " + names[nextAction] + "?(b/s/c):")
                 if bluffCall.lower() == "y" or bluffCall.lower() == "b":
 
                     actionTaken = True
@@ -645,6 +651,12 @@ def selectPlayers(players, current, nextaction, lasteject):
 
 
 def cpuBet(allPlayerHands, currentAction, lastFace, lastCount, easyChance, medChance, hardChance, diceFace, minCount):
+    #added hardening/checks against some errors (which technically should never occur, as the values are normalised before the game loop runs. They are never modified within game loop)
+    if (easyChance + medChance + hardChance) != 1:
+        easyChance, medChance, hardChance = normaliseChanceValues(easyChance, medChance, hardChance)
+    else:
+        pass
+
     # used in processing only
     facesPresent = []
     countOfFaces = [0, 0, 0, 0, 0, 0]
@@ -751,7 +763,7 @@ def difficultySelect():
 
 def normaliseChanceValues(easyChance, medChance, hardChance):  # in case new changes to the chances occurs
     totalChance = easyChance + medChance + hardChance
-    if totalChance > 1.0:  # normalise by dividing by itself (n/n = 1 therefore dividing each constituent by n will yield normalised chance values NOTE: random.random() can only work within 0 to 1)
+    if totalChance != 1.0:  # normalise by dividing by itself (n/n = 1 therefore dividing each constituent by n will yield normalised chance values NOTE: random.random() can only work within 0 to 1)
         easyChance = easyChance / totalChance
         medChance = medChance / totalChance
         hardChance = hardChance / totalChance
