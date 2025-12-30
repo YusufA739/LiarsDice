@@ -18,7 +18,13 @@ warn_unused_configs = true
 [project]
 name = "liarsDice"
 version = "0.6.3"
-description = "Simple Liar's Dice game. Inspired by RDR1 minigame"
+description = "A Liar's Dice game"
+authors = [
+    {name = "Yusuf739"}
+]
+license = {text = "Creative Commons Attribution-Noncommercial-Share Alike license"}
+readme = "README.md"
+requires-python = ">=3.6"
 
 [project.scripts]
 liarsdice = "LiarsDice.liarsDice:main"
