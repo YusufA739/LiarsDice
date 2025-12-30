@@ -22,7 +22,7 @@ authors = [
     {name = "YusufA442", email = "yusuf365820@gmail.com"}
 ]
 description = "Liar's Dice Game"
-readme = "README.md"
+readme = "readme.md"
 requires-python = ">=3.6"
 
 [project.scripts]
