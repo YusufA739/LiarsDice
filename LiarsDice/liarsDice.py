@@ -777,7 +777,8 @@ def normaliseChanceValues(easyChance, medChance, hardChance):  # in case new cha
 #this is done so we can call it from outside when imported into another script instead of relying on dunder for execution of main
 def run():
     setupReturn = 1
-    while setupReturn == 1:
+    while setupReturn == 1 and not os.environ.get('GITHUB_ACTIONS'):#ignore running in CI/CD
+        #note: (CD mainly, as CI will just import necessary methods and operate on them with input data and valid output checking)
         setupReturn = setup()
 
 #main
