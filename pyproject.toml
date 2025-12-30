@@ -14,16 +14,3 @@ line_length = 88
 python_version = "3.8"
 warn_return_any = true
 warn_unused_configs = true
-
-[project]
-name = "liarsDice"
-version = "1.0"
-authors = [
-    {name = "YusufA442", email = "yusuf365820@gmail.com"}
-]
-description = "Liar's Dice Game"
-readme = "readme.md"
-requires-python = ">=3.6"
-
-[project.scripts]
-liars-dice = "liarsdice:main"  # Creates command: liarsDice
