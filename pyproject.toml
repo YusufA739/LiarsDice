@@ -15,6 +15,9 @@ python_version = "3.8"
 warn_return_any = true
 warn_unused_configs = true
 
+[tool.setuptools]
+packages = ["LiarsDice"]
+
 [project]
 name = "liarsDice"
 version = "0.6.3"
@@ -29,4 +32,4 @@ requires-python = ">=3.6"
 urls = {Homepage = "https://github.com/YusufA442/liarsDice"}
 
 [project.scripts]
-liarsdice = "LiarsDice.liarsDice:main"
+liarsdice = "LiarsDice.liarsDice:run"
