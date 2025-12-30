@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name="liarsDice",
     version="0.6.1",
-    packages=["liarsDice"],
+    packages=["LiarsDice"],
     install_requires=[],
     author="Yusuf739",
     author_email="yusuf265820@gmail.com",
