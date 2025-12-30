@@ -1,4 +1,5 @@
-import random, time, os, math
+import random, time, os
+#import math #removed due to not being used at all in game (basic operations for maths needed so far)
 
 
 def setup():
