@@ -1,4 +1,4 @@
-name: Publish to PyPI
+name: CD to PyPI
 
 on:
   release:
