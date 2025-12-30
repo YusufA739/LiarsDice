@@ -774,8 +774,13 @@ def normaliseChanceValues(easyChance, medChance, hardChance):  # in case new cha
 
     return easyChance, medChance, hardChance
 
-#main
-if __name__ == "__main__":
+#this is done so we can call it from outside when imported into another script instead of relying on dunder for execution of main
+def run():
     setupReturn = 1
     while setupReturn == 1:
         setupReturn = setup()
+
+#main
+if __name__ == "__main__":
+    run()
+    print("GOODBYE")

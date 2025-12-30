@@ -1,5 +1,5 @@
 import random
-from liarsDice import cpuBet,dicegraphics
+from LiarsDice.liarsDice import cpuBet,dicegraphics
 
 threeTestUnit = ""
 
