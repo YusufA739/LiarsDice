@@ -1,19 +1,30 @@
-name: CD - Run on Release
+name: Publish to PyPI
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
-  run-on-release:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Run script
-      run: |
-        echo "🎊 This is CD! Running because a release was created."
-        python liarsDice.py
-        echo "Release version: ${{ github.event.release.tag_name }}"
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install build tools
+      run: pip install build twine
+
+    - name: Build package
+      run: python -m build
+
+    - name: Publish to PyPI
+      run: twine upload dist/*
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
