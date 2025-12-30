@@ -10,4 +10,9 @@ setup(name="liarsDice",
     description="Simple Liar's Dice game. Inspired by RDR1 minigame",
     long_description=open('readme.txt').read(),
     long_description_content_type="text/plain",
-    url="https://github.com/YusufA442/liarsDice")
+    url="https://github.com/YusufA442/liarsDice",
+    entry_points={
+        "console_scripts": [
+            "liarsDice=LiarsDice.liarsDice:run",
+        ]
+    })
