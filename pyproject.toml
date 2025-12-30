@@ -14,3 +14,11 @@ line_length = 88
 python_version = "3.8"
 warn_return_any = true
 warn_unused_configs = true
+
+[project]
+name = "liarsDice"
+version = "0.6.3"
+description = "Simple Liar's Dice game. Inspired by RDR1 minigame"
+
+[project.scripts]
+liarsdice = "LiarsDice.liarsDice:main"
