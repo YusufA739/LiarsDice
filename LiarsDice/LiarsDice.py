@@ -15,7 +15,7 @@ def setup():
             easyChance, medChance, hardChance = difficultySelect()
             easyChance, medChance, hardChance = normaliseChanceValues(easyChance, medChance, hardChance)
         else:
-            pass
+            easyChance, medChance, hardChance = 1,0,0
 
         for placeholder in range(players):
             dieInHands.append(5)
@@ -33,8 +33,7 @@ def setup():
         nextAction = currentAction + 1
 
         if cpuMode:
-            cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode, easyChance, medChance,
-                    hardChance)  # give initial conditions to gameloop
+            cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode, easyChance, medChance, hardChance)  # give initial conditions to gameloop
         else:
             game(allPlayerHands, dieInHands, players, currentAction, nextAction,
                  cpuMode)  # give initial conditions to gameloop
