@@ -1,4 +1,4 @@
-import random, time, os
+import random, time
 #import math #removed due to not being used at all in game (basic operations for maths needed so far)
 
 
@@ -7,7 +7,7 @@ def setup():
     allPlayerHands = []
     cpuMode = False
 
-    os.system('cls')
+    
     try:
         players = int(input("How many players?"))
         if players <= 1:
@@ -73,7 +73,7 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
             else:
                 actionTaken = False  # reset flag for next round
 
-            os.system('cls')  # Clear the console for a fresh view
+              # Clear the console for a fresh view
             print("Player " + names[currentAction] + "'s turn")
             print("Your dice:", allPlayerHands[currentAction])
             dieCountFormatted = "\n"
@@ -103,7 +103,7 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
                 except ValueError:
                     print("Invalid input. Integers only for face and count.")
 
-            os.system('cls')
+            
             print("Player " + names[nextAction] + "'s turn")
             print("Your dice:", allPlayerHands[nextAction])
 
@@ -234,7 +234,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
             else:
                 pass  # don't generate new hands
 
-            os.system('cls')  # Clear the console for a fresh view
+              # Clear the console for a fresh view
             # print(currentAction)debug due to old actioning code left in and causing bad behaviour (fixed)
             print("Player " + names[currentAction] + "'s turn")
             print("Your dice:", allPlayerHands[currentAction])
@@ -281,7 +281,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                     else:
                         break
 
-            os.system('cls')
+            
             if nextAction == 0:  # Player's turn
                 print("Player " + names[nextAction] + "'s turn")
                 print("Your dice:", allPlayerHands[nextAction])
