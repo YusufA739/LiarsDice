@@ -52,7 +52,13 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
     lastBet = 10
     lastFace = 0
     lastCount = 0
+    #avoid ref-before-assign err
+    currentBet = 0
+    diceFace = 0
+    minCount = 0
+    #avoid rba err
     lastEject = "none"
+    totalDiceCount = players * 5 #initial count to avoid reference-before-assignment err
     # when we start the game set this to true, so we can get new hands, it will reset to false anyway as actionTaken tells the code to gen new hands
     actionTaken = True  # records any action taken against any other player, resets when new hands are generated, which will be due to flag being true
     names = takenames(players,
@@ -67,11 +73,25 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
             currentAction, nextAction = selectPlayers(players, currentAction, nextAction,
                                                       lastEject)  # select new numbers for actions
 
-            if actionTaken:  # get new dice as last were revealed (irl version, may implement this later)
+            if actionTaken:  # get new dice as last were revealed and reset betting tracker
                 allPlayerHands = generateHands(dieInHands)
+                lastBet = 10#reset here for centralised resetting
+                lastFace = 1
+                lastCount = 0
                 actionTaken = False
             else:
-                actionTaken = False  # reset flag for next round
+                if (lastFace == 6 and lastCount >= totalDiceCount):
+                    lastBet = 10
+                    lastFace = 1
+                    lastCount = 0
+                    print("Maximum bet reached, resetting bet...")
+                    time.sleep(1)
+                else:
+                    lastBet = currentBet
+                    lastFace = diceFace
+                    lastCount = minCount#this code makes sense to do before the next iteration starts because then it...
+                    #is not just semantically the lastBet. However, it is simpler and more centralised to be done like this and more logically sound instead of repeating if blocks
+                actionTaken = False  # reset flag for next round(not needed)
 
             os.system('cls')  # Clear the console for a fresh view
             print("Player " + names[currentAction] + "'s turn")
@@ -147,7 +167,7 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
 
                     print(allPlayerHands)
                     print(dieInHands)
-                lastBet = 10
+
             elif bluffCall.lower() == "s":
 
                 actionTaken = True
@@ -189,15 +209,9 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
             else:
                 print("No action taken, Player " + names[nextAction] + " continues")
                 time.sleep(1)
-                print("Last Bet was " + str(
-                    currentBet) + ". You must bet higher than this next round, by frequency or face or both")
+                print("Last Bet was " + str(currentBet) + ". You must bet higher than this next round, by frequency or face or both")
                 time.sleep(1)
-                lastBet = currentBet
-                lastFace = diceFace
-                lastCount = minCount
-                if (lastFace == 6 and lastCount == totalDiceCount):
-                    print("Maximum bet reached, resetting bet...")
-                    time.sleep(1)
+
 
         time.sleep(4)
 
@@ -207,8 +221,14 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
     lastBet = 10
     lastFace = 0
     lastCount = 0
+    #avoid ref-before-assign err
+    currentBet = 0
+    diceFace = 0
+    minCount = 0
+    #avoid rba err
     actionTaken = True  # records any action taken against any other player
     lastEject = "none"  # not used in 1v1 (only 2 players so once the first eject happens, it's the last eject for that game as well, right?)
+    totalDiceCount = players * 5 #could just put 10 here...
     currentAction = random.randint(0, 1)
     nextAction = 1 - currentAction
     names = takenames(players, cpuMode)
@@ -230,9 +250,22 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
             # regenerate hands if actions were taken (dice usually get shown in irl/gui modes)
             if actionTaken:
                 allPlayerHands = generateHands(dieInHands)
+                lastBet = 10#reset here for centralised resetting
+                lastFace = 1
+                lastCount = 0
                 actionTaken = False
             else:
-                pass  # don't generate new hands
+                if (lastFace == 6 and lastCount >= totalDiceCount):
+                    lastBet = 10
+                    lastFace = 1
+                    lastCount = 0
+                    print("Maximum bet reached, resetting bet...")
+                    time.sleep(1)
+                else:
+                    lastBet = currentBet
+                    lastFace = diceFace
+                    lastCount = minCount
+                actionTaken = False  # reset flag for next round(not needed)
 
             os.system('cls')  # Clear the console for a fresh view
             # print(currentAction)debug due to old actioning code left in and causing bad behaviour (fixed)
@@ -325,7 +358,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
 
                         print(allPlayerHands)
                         print(dieInHands)
-                    lastBet = 10
+
                 elif bluffCall.lower() == "s":
                     print("Player", names[nextAction], "calls spot on, on Player", names[currentAction])
                     time.sleep(1)
@@ -367,14 +400,8 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                 else:
                     print("No action taken, Player ", names[nextAction], " continues")
                     time.sleep(1)
-                    print("Last Bet was " + str(
-                        currentBet) + ". You must bet higher than this next round, by frequency or face or both")
-                    lastBet = currentBet
-                    lastFace = diceFace
-                    lastCount = minCount
-                    if (lastFace == 6 and lastCount == totalDiceCount):
-                        print("Maximum bet reached, resetting bet...")
-                        time.sleep(1)
+                    print("Last Bet was " + str(currentBet) + ". You must bet higher than this next round, by frequency or face or both")
+
             else:  # CPU's turn
                 # check if player even has enough dice for bet
                 # cpuCount = minCount - sum(1 for die in allPlayerHands[nextAction] for dice in die if dice == diceFace)
@@ -424,7 +451,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
 
                         print(allPlayerHands)
                         print(dieInHands)
-                    lastBet = 10
+
                 elif bluffCall.lower() == "s":
                     print("Player", names[nextAction], "calls spot on, on Player", names[currentAction])
                     time.sleep(1)
@@ -468,13 +495,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                 else:
                     print("No action taken, Player ", names[nextAction], " continues")
                     time.sleep(1)
-                    print("Last Bet was " + str(
-                        currentBet) + ". You must bet higher than this next round, by frequency or face or both")
-                    lastBet = currentBet
-                    lastFace = diceFace
-                    lastCount = minCount
-                    if (lastFace == 6 and lastCount == totalDiceCount):
-                        print("Maximum bet reached, resetting bet...")
+                    print("Last Bet was " + str(currentBet) + ". You must bet higher than this next round, by frequency or face or both")
             time.sleep(4)
 
 
