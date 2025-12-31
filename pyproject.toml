@@ -26,7 +26,7 @@ authors = [
     {name = "YusufA442", email = "yusuf265820@gmail.com"}
 ]
 dependencies = []
-license = {text = "Creative Commons Attribution-Noncommercial-Share Alike license"}
+license = {text = "Apache-2.0 license"}
 readme = "readme.txt"
 requires-python = ">=3.6"
 urls = {Homepage = "https://github.com/YusufA442/LiarsDice"}
