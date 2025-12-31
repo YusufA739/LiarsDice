@@ -247,7 +247,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
             currentAction = nextAction
             nextAction = temp
 
-            # regenerate hands if actions were taken (dice usually get shown in irl/gui modes)
+            # regenerate hands if actions were taken
             if actionTaken:
                 allPlayerHands = generateHands(dieInHands)
                 lastBet = 10#reset here for centralised resetting
