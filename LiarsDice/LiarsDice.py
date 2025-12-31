@@ -725,7 +725,7 @@ def cpuBet(allPlayerHands, currentAction, lastBet, lastFace, lastCount, currentB
             diceFace = lastFace
             minCount = lastCount + 1
         else:
-            minCount = countOfFaces[diceFace - 1] + random.randint(0, 2)
+            minCount = countOfFaces[diceFace - 1] + random.randint(0, 2)#to try avoid a spot on call from the opps
             if minCount <= lastCount:
                 minCount = lastCount + 1#bluff as bet is too high for us to accurately call so just add one onto the bet
 
