@@ -15,4 +15,6 @@ jobs:
         python-version: '3.13'
 
     - name: Run the script
-      run: python testing/cpuTester.py
+      run: |
+        pip install -e .
+        python testing/cpuTester.py
