@@ -16,5 +16,4 @@ jobs:
 
     - name: Run the script
       run: |
-        pip install -e .
-        python testing/cpuTester.py
+        python -m testing/cpuTester.py
