@@ -16,4 +16,4 @@ jobs:
 
     - name: Run the script
       run: |
-        python ../../testing/cpuTester.py
+        python ./testing/cpuTester.py
