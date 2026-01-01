@@ -110,7 +110,6 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
 
                     totalDiceCount = sum(dieInHands)
                     if currentBet > lastBet and minCount <= totalDiceCount and minCount >= 1 and diceFace <= 6 and diceFace >= 1:
-                        lastBet = currentBet  # not needed, but is valid anyway
                         break
                     else:
                         if not currentBet > lastBet:
@@ -119,6 +118,8 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
                             print("Face chosen is not 1 to 6")
                         if minCount <= lastCount:
                             print("Minimum count is smaller than last count")
+                        if minCount > totalDiceCount:
+                            print("Minimum count is greater than total dice count. Be smart about minimum count")
                         time.sleep(2)
                 except ValueError:
                     print("Invalid input. Integers only for face and count.")
@@ -286,7 +287,6 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                         currentBet = int(str(diceFace) + str(minCount))
 
                         if currentBet > lastBet and minCount <= totalDiceCount and minCount >= 1 and diceFace <= 6 and diceFace >= 1:
-                            lastBet = currentBet  # not needed, but is valid anyway
                             break
                         else:
                             if not currentBet > lastBet:
@@ -295,6 +295,8 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                                 print("Face chosen is not 1 to 6")
                             if minCount <= lastCount:
                                 print("Minimum count is smaller than last count")
+                            if minCount > totalDiceCount:
+                                print("Minimum count is greater than total dice count. Be smart about the minimum count")
                             time.sleep(2)
                     except ValueError:
                         print("Invalid input. Integers only for face and count.")
@@ -308,7 +310,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
 
                     #game checking if bet is valid - it is NOT part of the CPU's betting system (FINAL CHECK, similar to player betting)
                     if currentBet <= lastBet:
-                        print("Robot has done an invalid bet. Please wait...")
+                        print("Robot has tried to do an invalid bet. Please wait...")
                         print("REPORT THIS IF YOU NOTICE WITH SCREENSHOT")
                         time.sleep(2)
                     else:
