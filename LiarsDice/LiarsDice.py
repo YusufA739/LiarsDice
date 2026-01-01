@@ -215,6 +215,7 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
 
 
         time.sleep(4)
+        input("Press Enter to continue...")
 
 
 def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode, easyChance, medChance, hardChance):
@@ -405,15 +406,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                     print("Last Bet was " + str(currentBet) + ". You must bet higher than this next round, by frequency or face or both")
 
             else:  # CPU's turn
-                # check if player even has enough dice for bet
-                # cpuCount = minCount - sum(1 for die in allPlayerHands[nextAction] for dice in die if dice == diceFace)
-                cpuCount = minCount - allPlayerHands[nextAction].count(diceFace)
-                if cpuCount <= 1:  # player got min number correct or player has once dice of that face as well as cpu having all of that face (can code in a 50/50 bluff when cpuCount == 1)
-                    bluffCall = "n"
-                elif cpuCount / len(allPlayerHands[currentAction]) >= 0.5 and cpuCount > 1:  # if player has >=60% of the dice, call bluff
-                    bluffCall = "b"
-                else:
-                    bluffCall = "n"
+                bluffCall = ""
 
                 if bluffCall.lower() == "y" or bluffCall.lower() == "b":
                     print("Player", names[nextAction], " calls bluff on Player ", names[currentAction])
@@ -499,6 +492,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                     time.sleep(1)
                     print("Last Bet was " + str(currentBet) + ". You must bet higher than this next round, by frequency or face or both")
             time.sleep(4)
+            input("Press Enter to continue...")
 
 
 def generateHands(dieinhands):  # playercount not needed as len(dieInHands) represents info good enough
