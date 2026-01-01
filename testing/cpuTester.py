@@ -1,5 +1,8 @@
-import random
-from LiarsDice.LiarsDice import cpuBet,dicegraphics
+import random,os
+if os.environ.get('GITHUB_ACTIONS'):
+    import sys
+    sys.path.append('..')
+from LiarsDice.LiarsDice.LiarsDice import cpuBet,dicegraphics
 #package/repo name, folder name, filename/module/script name
 
 
