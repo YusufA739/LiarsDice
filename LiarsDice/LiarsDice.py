@@ -405,7 +405,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
 
                 fakePlayerHands = []
                 faceFrequency = [[],[],[],[],[],[]]
-                for carrier in range(allPlayerHands[currentAction]-1):
+                for carrier in range(len(allPlayerHands[currentAction])-1):
                     face = random.randint(1,6)
                     fakePlayerHands.append(face)
                     faceFrequency[face - 1] = faceFrequency[face - 1] + 1
