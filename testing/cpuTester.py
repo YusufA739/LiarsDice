@@ -1,5 +1,5 @@
 import random
-from LiarsDice.LiarsDice import cpuBet,dicegraphics
+from LiarsDice.LiarsDice.LiarsDice.LiarsDice import cpuBet,dicegraphics
 #package/repo name, folder name, filename/module/script name
 
 
