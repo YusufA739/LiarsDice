@@ -404,7 +404,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                 bluffCall = ""
 
                 fakePlayerHands = []
-                faceFrequency = [[],[],[],[],[],[]]
+                faceFrequency = [0,0,0,0,0,0]
                 for carrier in range(len(allPlayerHands[currentAction])-1):
                     face = random.randint(1,6)
                     fakePlayerHands.append(face)
