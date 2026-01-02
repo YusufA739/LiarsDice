@@ -172,7 +172,7 @@ def game(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuMode
                 actionTaken = True
 
                 actualcount = 0
-                validBet = False
+                validBet = True#should be reverse of if statement block's redefinition
                 for hand in allPlayerHands:
                     for dice in hand:
                         if dice == diceFace:
@@ -363,7 +363,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                     actionTaken = True
 
                     actualcount = 0
-                    validBet = False
+                    validBet = True#has to be reverse of redef in if block, to keep both branches open as no alt branch to set to true is made (else or elif actualcount != minCount)
                     for hand in allPlayerHands:
                         for dice in hand:
                             if dice == diceFace:
@@ -468,7 +468,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                     actionTaken = True
 
                     actualcount = 0
-                    validBet = False
+                    validBet = True#should be reverse of if statement block's redef to keep both true/false paths open
                     for hand in allPlayerHands:
                         for dice in hand:
                             if dice == diceFace:
