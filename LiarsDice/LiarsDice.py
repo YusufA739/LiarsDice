@@ -308,6 +308,8 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                     if not (diceFace > lastFace or (diceFace == lastFace and minCount > lastCount)) and (minCount <= totalDiceCount and minCount >= 1 and diceFace <= 6 and diceFace >= 1):
                         print("Robot has tried to do an invalid bet. Please wait...")
                         print("REPORT THIS IF YOU NOTICE WITH SCREENSHOT")
+                        print("Bet:",currentBet)
+                        input("Press enter to continue...")
                         time.sleep(2)
                     else:
                         break
@@ -398,7 +400,7 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
                 else:
                     print("No action taken, Player ", names[nextAction], " continues")
                     time.sleep(1)
-                    print("Last Bet was " + str(currentBet) + ". You must bet higher than this next round, by frequency or face or both")
+                    print("Last Bet was " + str(diceFace) + "x" + str(minCount) + ". You must bet higher than this next round, by frequency or face or both")
 
             else:  # CPU's turn
                 bluffCall = ""
