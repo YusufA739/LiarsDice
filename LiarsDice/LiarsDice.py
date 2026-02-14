@@ -404,24 +404,68 @@ def cpugame(allPlayerHands, dieInHands, players, currentAction, nextAction, cpuM
 
             else:  # CPU's turn
                 bluffCall = ""
+                remainingCount = minCount#used to try to rebuild bet...
+                randomFill = 0#...and scenario from the ground up (this one most likely won't be used icl)
+                currentActionFakeHand = []#generate fake approx hands for player
+                currentActionFaceFrequency = [0,0,0,0,0,0]#for the player only
+                totalFaceFrequency = [0,0,0,0,0,0]#estimated frequency and our frequency summed up to get total estimate
+                probability = 0 #raw prob value for CA to get diceFace, n number of times
+                baseProbability = 0.167**2 #base prob value. It is very possible to get two dice faces of the same for example, so we use this value for normalising probability value
+                normalisedProbability = 0 #normalised prob value against baseProbability. Do not just placeholder as probability/baseProbability as you will get math err (0 div error). Set to 0 as other vars
+                diceSet = [1,2,3,4,5,6] #allows for random generating and random autofilling of remaining dice space later on
+                diceSet.remove(diceFace)
 
-                fakePlayerHands = []
-                faceFrequency = [0,0,0,0,0,0]
-                for carrier in range(len(allPlayerHands[currentAction])-1):
-                    face = random.randint(1,6)
-                    fakePlayerHands.append(face)
-                    faceFrequency[face - 1] = faceFrequency[face - 1] + 1
-                fakePlayerHands.append(diceFace)
 
+                #count frequency of die in our hand
                 for carrier in allPlayerHands[nextAction]:
-                    faceFrequency[carrier - 1] = faceFrequency[carrier - 1] + 1
+                    totalFaceFrequency[carrier - 1] = totalFaceFrequency[carrier - 1] + 1
 
-                if faceFrequency[diceFace - 1] > minCount:
-                    bluffCall = "b"
-                elif faceFrequency[diceFace - 1] < minCount:
-                    bluffCall = "c"
-                else:# ... == minCount
-                    bluffCall = "s"
+                #subtract to calculate estimate for player's amount of diceFace in hand
+                remainingCount = minCount - totalFaceFrequency[diceFace - 1]
+
+
+                #if remainingCount is still bigger than the number of dice they could hold, player bluffed
+                #If we continued with prediction, we would generate hands that are too big already
+                if remainingCount > len(allPlayerHands[currentAction]):
+                    bluffCall = "b" #short circuit the prediction
+
+                else:
+                    # tempFreqCounter = 0#decide if wanted or not and adjust commented lines (easier to read without)
+                    #add remainingCount dice faces to player's estimated hand
+                    for carrier in range(remainingCount):
+                        currentActionFakeHand.append(diceFace)
+                        totalFaceFrequency[diceFace - 1] = totalFaceFrequency[diceFace - 1] + 1
+                        currentActionFaceFrequency[diceFace - 1] = totalFaceFrequency[diceFace - 1] + 1
+                        # tempFreqCounter = tempFreqCounter + 1
+
+                    #can be removed for the two commented lines above. Prevents repeated array read and write pair
+                    #can only be done as we know the face beforehand - it's a fixed face
+                    # totalFaceFrequency[diceFace - 1] = totalFaceFrequency[diceFace - 1] + tempFreqCounter
+                    # currentActionFaceFrequency[diceFace - 1] = currentActionFaceFrequency[diceFace - 1] + tempFreqCounter
+
+
+                    randomFill = len(allPlayerHands[currentAction]) - remainingCount#we now have the number of dice to rand fill for
+                    #as you can see, this variable - along with remainingCount - avoid the use of long delta expressions or... MAGIC NUmBErs (PIRATE SOFTWARE SAYS HELLO)
+
+                    for carrier in range(randomFill):
+                        newFace = random.choice(diceSet) # so we can track frequency of dice faces
+                        currentActionFakeHand.append(newFace)
+                        totalFaceFrequency[newFace - 1] = totalFaceFrequency[newFace - 1] + 1
+                        currentActionFaceFrequency[newFace - 1] = currentActionFaceFrequency[newFace - 1] + 1
+
+                    #double check that we have not generated bigger hands than what is required
+                    if len(currentActionFakeHand) > len(allPlayerHands[currentAction]):
+                        print("Generated hands are incorrect in size")
+                        input("Press enter to continue")
+
+                    probability = (  (0.167) ** (currentActionFaceFrequency[diceFace - 1])  )
+                    normalisedProbability = probability / baseProbability
+                    if normalisedProbability > 1:
+                        bluffCall = "b"
+                    elif normalisedProbability < 1:
+                        bluffCall = "c"
+                    else:# ... == 1
+                        bluffCall = "s"
 
 
 
